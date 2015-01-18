@@ -95,6 +95,7 @@ window.VM = {
 	reset: function () {
 
 		this.display.clear();
+		this.waitingForKeyPress = false;
 		this.V = new Uint8Array(new ArrayBuffer(0x10));
 		this.pc = this.start;
 		window.debugga && window.debugga(this);
@@ -102,6 +103,18 @@ window.VM = {
 	},
 
 	step: function () {
+
+		function verify (addr) {
+
+			if (addr < 0x200 || addr > 0xFFE) {
+
+				throw new Error("Illegal jump location:" + addr.toString(16));
+
+			}
+
+			return addr;
+
+		}
 
 		if (this.waitingForKeyPress) {
 
@@ -114,8 +127,9 @@ window.VM = {
 
 		}
 
-		var instruction = this.RAM[this.pc] << 8 | this.RAM[this.pc + 1],
+		var instruction = (this.RAM[this.pc] << 8) | this.RAM[this.pc + 1],
 			di = "0x" + instruction.toString(16),
+			addr,
 			i;
 
 		this.pc += 2;
@@ -131,9 +145,8 @@ window.VM = {
 		case 0x0000:
 
 			switch (nnn) {
-			case 0x0EE:
-				// 00EE: Returns from a subroutine.
-				this.pc = this.stack.pop();
+			case 0x000:
+				// Empty opcode
 				break;
 
 			case 0x0E0:
@@ -141,22 +154,34 @@ window.VM = {
 				this.display.clear();
 				break;
 
-			// 0NNN: Calls RCA 1802 program at address NNN.
+			case 0x0EE:
+				// 00EE: Returns from a subroutine.
+				if (this.stack.length == 0) {
+					throw new Error("No call stack to pop from");
+				}
+				this.pc = this.stack.pop();
+				break;
+
 			default:
-				console.log("NOP 0x0000", di);
+				console.log("nop. 0x0nnn.");
+				// Jump to nnnn?
+				//this.pc = verify(nnn);
+				break;
 			}
 
 			break;
 
 		case 0x1000:
 			// 1NNN Jumps to address NNN.
-			this.pc = nnn;
+			this.pc = verify(nnn);
 			break;
 
 		case 0x2000:
 			// 2NNN: Calls subroutine at NNN.
-			this.stack.push(this.pc);
-			this.pc = nnn;
+			if (this.stack.push(this.pc) > 64) {
+				throw new Error("Stack too large.");
+			}
+			this.pc = verify(nnn);
 			break;
 
 		case 0x3000:
@@ -232,12 +257,14 @@ window.VM = {
 
 			case 0x7:
 				// 8XY7: Sets VX to VY minus VX. VF is set to 0 when there's a borrow, and 1 when there isn't.
-				this.V[0xF] = (this.V[x] = this.V[y] - this.V[x]) < 0x0 ? 0x0 : 0x1;
+				//this.V[0xF] = (this.V[x] = this.V[y] - this.V[x]) < 0x0 ? 0x0 : 0x1;
+				this.V[0xF] = this.V[x] > this.V[y] ? 0x0 : 0x1;
+				this.V[x] = this.V[y] - this.V[x];
 				break;
 
 			case 0xE:
 				// 8XYE: Shifts VX left by one. VF is set to the value of the most significant bit of VX before the shift.[2]
-				this.V[0xF] = this.V[x] & 0x80 >> 7;
+				this.V[0xF] = this.V[x] >> 7;
 				this.V[x] = this.V[x] << 1;
 				break;
 
@@ -261,12 +288,12 @@ window.VM = {
 
 		case 0xB000:
 			// BNNN: Jumps to the address NNN plus V0.
-			this.pc = nnn + this.V[0];
+			this.pc = verify(nnn + this.V[0]);
 			break;
 
 		case 0xC000:
 			// CXNN: Sets VX to a random number and NN.
-			this.V[x] = (Math.random () * (0xFF + 1)) & nn;
+			this.V[x] = (Math.random () * 0xFF) & nn;
 			break;
 
 		case 0xD000:
@@ -275,7 +302,10 @@ window.VM = {
 			// a pixel, register VF is set to 1 otherwise it is zero. All drawing
 			// is XOR drawing (i.e. it toggles the screen pixels)
 
-			var collision = !this.drawSprite(this.V[x], this.V[y], this.I, n);
+			var collision = this.drawSprite(this.V[x], this.V[y], this.I, n);
+
+			//console.log(collision);
+
 			this.V[0xF] = collision ? 0x1 : 0;
 			break;
 
@@ -330,6 +360,7 @@ window.VM = {
 			case 0x1E:
 				// FX1E: Adds VX to I.[3]  VF is set to 1 when range overflow (I+VX>0xFFF), and 0 when there isn't. This is undocumented feature of the Chip-8
 				this.V[0xF] = (this.I += this.V[x]) > 0xFFF ? 1 : 0;
+				if (this.I > 0xFFF) this.I -= 0xFFF;
 				break;
 
 			case 0x29:
@@ -341,9 +372,9 @@ window.VM = {
 				// FX33: Stores the Binary-coded decimal representation of VX, with the most significant
 				// of three digits at the address in I, the middle digit at I plus 1, and the least
 				// significant digit at I plus 2.
-				this.RAM[this.I + 0] = this.V[X] % 1000 / 100 | 0;
-				this.RAM[this.I + 1] = this.V[X] % 100 / 10 | 0;
-				this.RAM[this.I + 2] = this.V[X] % 10 | 0;
+				this.RAM[this.I + 0] = this.V[x] % 1000 / 100 | 0;
+				this.RAM[this.I + 1] = this.V[x] % 100 / 10 | 0;
+				this.RAM[this.I + 2] = this.V[x] % 10 | 0;
 				break;
 
 			case 0x55:
@@ -352,13 +383,22 @@ window.VM = {
 					this.RAM[this.I + i] = this.V[i];
 				}
 
+				// "The value of the I register after save and restore opcodes is not well defined.""
+				// if compatibitiy  - this.I = this.I + i;
+
 				break;
 
 			case 0x65:
 				// FX65: Fills V0 to VX with values from memory starting at address I.[4]
 				for (i = 0; i <= x; i++) {
+
 					this.V[i] = this.RAM[this.I + i];
+
 				}
+
+				// "The value of the I register after save and restore opcodes is not well defined.""
+				// compat: this.I = this.I + i;
+
 				break;
 
 			default:
@@ -407,7 +447,9 @@ window.VM = {
 
 				if (bits & 1) {
 
-					collision |= this.display.xorPixel(x + bit, y + line);
+					if (!this.display.xorPixel(x + bit, y + line)){
+						collision = true;
+					};
 
 				}
 

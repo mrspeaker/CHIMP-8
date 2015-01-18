@@ -35,19 +35,20 @@ var Display = {
 
 	},
 
+	// Returns true if it turns pixel on
 	xorPixel: function(x, y) {
 
 		var pix = x * 4 + y * 4 * this.w,
-			xor = this.data.data[pix + 1] ? 0 : 255;
+			flipOn = this.data.data[pix + 1] > 0 ? false : true;
 
-		this.data.data[pix] = xor ? 0 : 0;
-		this.data.data[pix + 1] = xor ? 200 : 0;
-		this.data.data[pix + 2] = xor ? 0 : 0;
+		this.data.data[pix] = flipOn ? 0 : 0;
+		this.data.data[pix + 1] = flipOn ? 200 : 0;
+		this.data.data[pix + 2] = flipOn ? 0 : 0;
 		this.data.data[pix + 3] = 255;
 
 		this.c.putImageData(this.data, 0, 0);
 
-		return xor > 0;
+		return flipOn;
 
 	}
 

@@ -67,3 +67,16 @@ following symbols:
     NN: 8-bit constant
     N: 4-bit constant
     X and Y: 4-bit register identifier
+
+
+## EMULATOR DIFFERENCES
+There are a number of differences between the various emulators. No doubt this could all be resolved if anyone had the sources to the original (circa 1977) interpreter.
+Add Aligned Opcodes
+Some emulators accept opcodes at odd addresses, and some don’t. Defensive programming should use even-aligned opcodes. (This distribution demands even-aligned opcodes on emulation, and gives a fatal error for odd-aligned opcodes on assembly, but accepts odd-aligned
+16
+chip8as(5) chip8as(5)
+opcodes for disassembly.)
+The I Register
+The value of the I register after save and restore opcodes is not well defined. Some emulator leaves the I register pointing past the last location referenced, other emulators leave it pointing at the first location referenced. Defensive programming should assume the I register is not meaningful after these opcodes. (This distribution is consistent with Gustafsson’s emulator, which moves the I register past the last location referenced.)
+The Borrow Flag
+Many emulators calculate the borrow after the sub and dif opcodes incorrectly. Defensive programming should assume the v15 register is not meaningful after these opcodes. (This distribution is consistent with Gustafsson’s emulator, which performs the operation in more than 8 bits, and sets the v15 register to 1 if any of the high bits of the result are non-zero, otherwise sets it to 0)
