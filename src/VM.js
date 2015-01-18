@@ -52,8 +52,6 @@ window.VM = {
 			}
 		}.bind(this), false);
 
-		this.dtTimer();
-
 		return this;
 
 	},
@@ -68,6 +66,8 @@ window.VM = {
 
 		}
 
+		vm.waitingForKeyPress = false;
+
 		console.log("Loaded " + prg.length + " bytes.");
 
 	},
@@ -75,16 +75,20 @@ window.VM = {
 	run: function () {
 
 		this.stop();
+
 		this.timer = setInterval(function () {
 			this.step();
 			this.step();
 		}.bind(this), 1000 / this.cpuSpeed);
+
+		this.dtTimer();
 
 	},
 
 	stop: function () {
 
 		clearInterval(this.timer);
+		clearInterval(this.timer_dt);
 
 	},
 
@@ -100,10 +104,14 @@ window.VM = {
 	step: function () {
 
 		if (this.waitingForKeyPress) {
+
 			if (!this.keys.some(function (k) { return k === 0x1; })) {
 				return;
 			}
+
 			this.waitingForKeyPress = false;
+			this.V[this.waitingStore] = this.keys.indexOf(0x1);
+
 		}
 
 		var instruction = this.RAM[this.pc] << 8 | this.RAM[this.pc + 1],
@@ -306,10 +314,12 @@ window.VM = {
 				// FX07: Sets VX to the value of the delay timer.
 				this.V[x] = this.DT;
 				break;
+
 			case 0x0A:
 				//FX0A: A key press is awaited, and then stored in VX.
 				this.keys = this.keys.map(function (k) { return 0x0; });
 				this.waitingForKeyPress = true;
+				this.waitingStore = x;
 				break;
 
 			case 0x15:
@@ -324,7 +334,7 @@ window.VM = {
 
 			case 0x29:
 				// FX29: Sets I to the location of the sprite for the character in VX. Characters 0-F (in hexadecimal) are represented by a 4x5 font.
-				console.log("font thing.", this.V[x]);
+				console.log("NOP: font thing.", this.V[x]);
 				break;
 
 			case 0x33:
@@ -370,7 +380,7 @@ window.VM = {
 
 	dtTimer: function () {
 
-		setTimeout(function () {
+		this.timer_dt = setTimeout(function () {
 
 			if (this.timer && this.DT > 0) {
 				this.DT -= 1;
