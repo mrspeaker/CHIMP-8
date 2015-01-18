@@ -48,14 +48,19 @@
 		<div id="pc"></div>
 	</div>
 
+	<input type="checkbox" id="dbgStep" checked="true">Dbg
+
 	<div style="clear:both;padding-top:10px">
 		<span>CHIMP-8</span>
 		<select id="loady">
 			<option value="">-- ROMS --</option>
 			<option value="Logo.ch8">Logo</option>
 			<option value="Maze2.ch8">Maze</option>
-			<option value="Zero.ch8">Zero demo</option>
+			<option value="Breakout1979.ch8">Breakout</option>
+			<option value="Space Invaders.ch8">Space Invaders</option>
+			<option value="Particle.ch8">Particles</option>
 			<option value="Trip8.ch8">Trip8 demo</option>
+			<option value="Sirpinski.ch8">Sirpinski</option>
 		</select>
 	</div>
 
@@ -79,7 +84,14 @@
 		clicka("#stop", vm.stop.bind(vm));
 		clicka("#reset", vm.reset.bind(vm));
 
+		window.debugga.run = true;//document.querySelector("#dbgStep").checked;
+		document.querySelector("#dbgStep").addEventListener("change", function (e) {
+
+			window.debugga.run = e.target.checked;
+
+		});
 		document.querySelector("#loady").addEventListener("change", function (e) {
+
 			var val = e.target.options[e.target.selectedIndex].value;
 			if (!val) { return; }
 
@@ -123,7 +135,7 @@
 
 		}
 
-		loadROM("Breakout1979.ch8", function (p) {
+		loadROM("Logo.ch8", function (p) {
 
 			vm.load(p);
 			vm.run();

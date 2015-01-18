@@ -1,5 +1,9 @@
 function debugga (VM) {
 
+	if (!window.debugga.run) {
+		return;
+	}
+
 	var reg = document.querySelector("#reg"),
 		pc = document.querySelector("#pc"),
 		h = function (i, min) {

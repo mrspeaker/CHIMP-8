@@ -11,7 +11,7 @@ FX18: Sets the sound timer to VX.
 
 window.VM = {
 
-	cpuSpeed: 500,
+	cpuSpeed: 500 / 2,
 
 	RAM: null,
 	display: null,
@@ -52,6 +52,8 @@ window.VM = {
 			}
 		}.bind(this), false);
 
+		this.dtTimer();
+
 		return this;
 
 	},
@@ -73,7 +75,10 @@ window.VM = {
 	run: function () {
 
 		this.stop();
-		this.timer = setInterval(this.step.bind(this), 1000 / this.cpuSpeed);
+		this.timer = setInterval(function () {
+			this.step();
+			this.step();
+		}.bind(this), 1000 / this.cpuSpeed);
 
 	},
 
@@ -86,6 +91,7 @@ window.VM = {
 	reset: function () {
 
 		this.display.clear();
+		this.V = new Uint8Array(new ArrayBuffer(0x10));
 		this.pc = this.start;
 		window.debugga && window.debugga(this);
 
@@ -358,13 +364,21 @@ window.VM = {
 
 		}
 
-		// Delay timer
-		// TODO: should run at 60Hz, not CPU speed.
-		if (this.DT > 0) {
-			this.DT -= 1;
-		}
-
 		window.debugga && window.debugga(this);
+
+	},
+
+	dtTimer: function () {
+
+		setTimeout(function () {
+
+			if (this.timer && this.DT > 0) {
+				this.DT -= 1;
+			}
+
+			this.dtTimer();
+
+		}.bind(this), 1000 / 60);
 
 	},
 
