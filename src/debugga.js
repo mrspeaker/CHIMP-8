@@ -21,7 +21,7 @@ function debugga (VM) {
 		var disp = function (pc) {
 
 			var out = [],
-				instruction = (VM.memory[pc] << 8) + VM.memory[pc + 1],
+				instruction = (VM.RAM[pc] << 8) + VM.RAM[pc + 1],
 				x = (instruction & 0x0F00) >> 8,
 				y = (instruction & 0x00F0) >> 4,
 				n = instruction & 0x000F,

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>CHIMP-8: a CHIP-8 VM</title>
+	<title>CHIMP-8: a CHIP-8 vm</title>
 	<meta charset="utf-8" />
 	<style>
 
@@ -61,10 +61,12 @@
 
 	<script src="src/debugga.js"></script>
 	<script src="src/Display.js"></script>
-	<script src="src/VM.js?&a=1"></script>
+	<script src="src/vm.js?&a=1"></script>
 	<script>
 
 		"use strict";
+
+		var vm = Object.create(VM).init();
 
 		var clicka = function (id, f) {
 
@@ -72,10 +74,10 @@
 
 		};
 
-		clicka("#step", VM.step.bind(VM));
-		clicka("#run", VM.run.bind(VM));
-		clicka("#stop", VM.stop.bind(VM));
-		clicka("#reset", VM.reset.bind(VM));
+		clicka("#step", vm.step.bind(vm));
+		clicka("#run", vm.run.bind(vm));
+		clicka("#stop", vm.stop.bind(vm));
+		clicka("#reset", vm.reset.bind(vm));
 
 		document.querySelector("#loady").addEventListener("change", function (e) {
 			var val = e.target.options[e.target.selectedIndex].value;
@@ -83,8 +85,8 @@
 
 			loadROM(val, function (p) {
 
-				VM.load(p);
-				debugga(VM);
+				vm.load(p);
+				debugga(vm);
 
 			});
 
@@ -121,10 +123,10 @@
 
 		}
 
-		loadROM("Logo.ch8", function (p) {
+		loadROM("Breakout1979.ch8", function (p) {
 
-			VM.load(p);
-			VM.run();
+			vm.load(p);
+			vm.run();
 
 		});
 
