@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>CHIMP-8: a CHIP-8 VM</title>
+	<meta charset="utf-8" />
+	<style>
+
+		body {
+			font-family: monospace;
+			font-size: 8pt;
+		}
+
+		canvas {
+			width: 196px;
+			border: 4px solid #444;
+			border-radius: 3px;
+		}
+
+		button {
+			border:1px solid #000;
+			font-family: monospace;
+			background-color: #fff;
+		}
+
+		#reg {
+			width: 70px;
+			float: left;
+		}
+
+		#pc {
+			width: 400px;
+		}
+
+	</style>
+</head>
+<body>
+	<div id="screen"></div>
+
+	<div>
+		<button id="step">Step</button>
+		<button id="run">Run</button>
+		<button id="stop">Stop</button>
+		<button id="reset">Reset</button>
+	</div>
+
+	<div id="dbg">
+		<div id="reg"></div>
+		<div id="pc"></div>
+	</div>
+
+	<div style="clear:both;padding-top:10px">
+		<span>CHIMP-8</span>
+		<select id="loady">
+			<option value="">-- ROMS --</option>
+			<option value="Logo.ch8">Logo</option>
+			<option value="Maze2.ch8">Maze</option>
+			<option value="Zero.ch8">Zero demo</option>
+			<option value="Trip8.ch8">Trip8 demo</option>
+		</select>
+	</div>
+
+	<script src="src/debugga.js"></script>
+	<script src="src/Display.js"></script>
+	<script src="src/VM.js?&a=1"></script>
+	<script>
+
+		"use strict";
+
+		var clicka = function (id, f) {
+
+			document.querySelector(id).addEventListener("click", f, false);
+
+		};
+
+		clicka("#step", VM.step.bind(VM));
+		clicka("#run", VM.run.bind(VM));
+		clicka("#stop", VM.stop.bind(VM));
+		clicka("#reset", VM.reset.bind(VM));
+
+		document.querySelector("#loady").addEventListener("change", function (e) {
+			var val = e.target.options[e.target.selectedIndex].value;
+			if (!val) { return; }
+
+			loadROM(val, function (p) {
+
+				VM.load(p);
+				debugga(VM);
+
+			});
+
+		}, false);
+
+		function loadROM (name, cb) {
+
+			var xhr = new XMLHttpRequest();
+			xhr.open("GET", "roms/" + name, true);
+			xhr.responseType = "arraybuffer";
+			xhr.onload = function () {
+
+				cb(new Uint8Array(xhr.response));
+
+			};
+
+			xhr.onerror = function (e) {
+
+				console.error(e);
+				alert("Error loading ROM (see console).\nLoading default instead.");
+
+				var defaultRom = "AOBgAGEAYgiiIEBAIhpBIBIQ0BjyHnAIEgpgAHEIAO4AAAAAAAAAAAAAAAAAAAAAAH9AX1BXVFQA/AT0FNRUVAA/IC8oKyoqAP4C+grqKioAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFRUVFRUVHQAVFRUVHQAAAAqKioqKio7ACoqKioqKu4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB0VFRUVFRUVAAAdFRUVFRUOyoqKioqKiruKioqKioqKgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVFRXUF9AfwBUVNQU9AT8ACoqKygvID8AKirqCvoC/gAAAAAAAAAAAAAAAAAAAAAA";
+
+				cb(new Uint8Array(
+					atob(defaultRom)
+						.split("")
+						.map(function(c) {
+							return c.charCodeAt(0);
+						})
+    			));
+			};
+
+			xhr.send();
+
+		}
+
+		loadROM("Logo.ch8", function (p) {
+
+			VM.load(p);
+			VM.run();
+
+		});
+
+	</script>
+</body>
+</html>
