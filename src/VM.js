@@ -29,6 +29,16 @@ window.VM = {
 		this.V = new Uint8Array(new ArrayBuffer(16));
 		this.stack = [];
 
+		this.bindKeys();
+
+		this.storeFont();
+
+		return this;
+
+	},
+
+	bindKeys: function () {
+
 		var keyed = function (code, isDown) {
 
 			var k = -1;
@@ -59,19 +69,22 @@ window.VM = {
 		}.bind(this);
 
 		document.addEventListener("keydown", function (e) {
+
 			if (e.repeat) {
+
 				return;
+
 			}
+
 			keyed(e.keyCode, true);
+
 		}.bind(this), false);
 
 		document.addEventListener("keyup", function (e) {
+
 			keyed(e.keyCode, false);
+
 		}.bind(this), false);
-
-		this.storeFont();
-
-		return this;
 
 	},
 
