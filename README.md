@@ -17,4 +17,5 @@ Mapped to:
 # Bugs
 
 - Main timer is setInterval... use rAF and do X iterations per loop instead.
-- Need key remapping
+- Need key remapping screen
+- Draw big (4x4) pixels, no canvas resize

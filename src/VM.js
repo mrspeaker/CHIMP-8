@@ -2,7 +2,7 @@
 
 window.VM = {
 
-	cpuSpeed: 500 / 2,
+	cpuSpeed: 500 / 4,
 
 	RAM: null,
 	display: null,
@@ -136,6 +136,8 @@ window.VM = {
 		this.stop();
 
 		this.timer = setInterval(function () {
+			this.step();
+			this.step();
 			this.step();
 			this.step();
 		}.bind(this), 1000 / this.cpuSpeed);
@@ -506,6 +508,8 @@ window.VM = {
 
 			}
 		}
+
+		this.display.render();
 
 		requestAnimationFrame(this.sixtyHz.bind(this))
 

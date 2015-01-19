@@ -1,25 +1,64 @@
 var Display = {
 
+	w: 64,
+	h: 32,
+	zoom: 4,
+	col: "#0d0",
+
 	init: function (container) {
 
 		var can = document.createElement("canvas"),
 			cont = container ? document.querySelector(container) : document.body,
 			c = can.getContext("2d");
 
-		this.h = 32,
-		this.w = 64;
-		this.c = c;
+		var off = document.createElement("canvas"),
+			coff = off.getContext("2d");
 
-		can.width = this.w;
-		can.height = this.h;
+		this.c = c;
+		this.coff = coff;
+
+		off.width = this.w;
+		off.height = this.h;
+		can.width = this.w * this.zoom;
+		can.height = this.h * this.zoom;
 		cont.appendChild(can);
 
 		c.fillStyle = "#000";
-		c.fillRect(0, 0, this.w, this.h);
+		c.fillRect(0, 0, this.w * this.zoom, this.h * this.zoom);
 
-		this.data = c.getImageData(0, 0, this.w, this.h);
+		this.data = coff.getImageData(0, 0, this.w, this.h);
 
 		return this;
+
+	},
+
+	render: function () {
+
+		var zoom = this.zoom,
+			data = this.data.data;
+
+		this.c.globalAlpha = 0.1;
+		this.c.fillStyle = "#000";
+		this.c.fillRect(0, 0, this.w * this.zoom, this.h * this.zoom);
+		this.c.globalAlpha = 1;
+
+		this.c.fillStyle = this.col;
+
+		var x, y, i, r, g, b;
+
+		for (x = 0; x < this.w; x++) {
+			for (y = 0; y < this.h; y++) {
+				i = (y * this.w + x) * 4;
+				r = data[i];
+				g = data[i + 1];
+				b = data[i + 2];
+				a = data[i + 3];
+
+			    if (r !== 0 || g !== 0 || b !== 0) {
+			    	this.c.fillRect(x * zoom,y * zoom, zoom - 1, zoom - 1);
+			    }
+			}
+		}
 
 	},
 
@@ -45,8 +84,6 @@ var Display = {
 		this.data.data[pix + 1] = flipOn ? 200 : 0;
 		this.data.data[pix + 2] = flipOn ? 0 : 0;
 		this.data.data[pix + 3] = 255;
-
-		this.c.putImageData(this.data, 0, 0);
 
 		return flipOn;
 
