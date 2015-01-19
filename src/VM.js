@@ -1,14 +1,5 @@
 "use strict";
 
-/*
-
-Not yet implemented:
-
-0NNN: Calls RCA 1802 program at address NNN.
-FX18: Sets the sound timer to VX.
-
-*/
-
 window.VM = {
 
 	cpuSpeed: 500 / 2,
@@ -22,6 +13,7 @@ window.VM = {
 	I: 0,
 	V: null,
 	DT: 0,
+	ST: 0,
 
 	stack: null,
 	waitingForKeyPress: false,
@@ -29,6 +21,8 @@ window.VM = {
 	init: function () {
 
 		this.display = Object.create(window.Display).init("#screen");
+		this.sound = Object.create(window.Sound).init();
+
 		this.keys = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
 		this.RAM = new Uint8Array(new ArrayBuffer(0x1000));
@@ -193,7 +187,7 @@ window.VM = {
 
 			default:
 				console.log("nop. 0x0nnn.");
-				// Jump to nnnn?
+				// Jump to nnnn? 0NNN: Calls RCA 1802 program at address NNN.
 				//this.pc = verify(nnn);
 				break;
 			}
@@ -386,6 +380,17 @@ window.VM = {
 				this.DT = this.V[x];
 				break;
 
+			case 0x18:
+				// FX18: Sets the sound timer to VX.
+				console.log(this.V[x]);
+				this.ST = this.V[x];
+				if (this.ST > 0) {
+
+					this.soundOn();
+
+				}
+				break;
+
 			case 0x1E:
 				// FX1E: Adds VX to I.[3]  VF is set to 1 when range overflow (I+VX>0xFFF), and 0 when there isn't. This is undocumented feature of the Chip-8
 				this.V[0xF] = (this.I += this.V[x]) > 0xFFF ? 1 : 0;
@@ -451,8 +456,24 @@ window.VM = {
 
 		this.timer_dt = setTimeout(function () {
 
-			if (this.timer && this.DT > 0) {
-				this.DT -= 1;
+			if (this.timer) {
+
+				if (this.DT > 0) {
+
+					this.DT -= 1;
+
+				}
+
+				if (this.ST > 0) {
+
+					this.ST -= 1;
+					if (this.ST <= 0) {
+
+						this.soundOff();
+
+					}
+
+				}
 			}
 
 			this.dtTimer();
@@ -490,6 +511,18 @@ window.VM = {
 
 		return collision;
 
+	},
+
+	soundOn: function () {
+
+		this.sound.on();
+
+	},
+
+	soundOff: function () {
+
+		this.sound.off();
+		
 	}
 
 };
