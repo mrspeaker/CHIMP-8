@@ -63,13 +63,13 @@ window.VM = {
 			0xF0, 0x80, 0xF0, 0x10, 0xF0,
 			0xF0, 0x80, 0xF0, 0x90, 0xF0,
 			0xF0, 0x10, 0x20, 0x40, 0x40,
-			0xF0, 0x90, 0xF0, 0x90, 0xF0, 
-			0xF0, 0x90, 0xF0, 0x10, 0xF0, 
-			0xF0, 0x90, 0xF0, 0x90, 0x90, 
-			0xE0, 0x90, 0xE0, 0x90, 0xE0, 
-			0xF0, 0x80, 0x80, 0x80, 0xF0, 
-			0xE0, 0x90, 0x90, 0x90, 0xE0, 
-			0xF0, 0x80, 0xF0, 0x80, 0xF0, 
+			0xF0, 0x90, 0xF0, 0x90, 0xF0,
+			0xF0, 0x90, 0xF0, 0x10, 0xF0,
+			0xF0, 0x90, 0xF0, 0x90, 0x90,
+			0xE0, 0x90, 0xE0, 0x90, 0xE0,
+			0xF0, 0x80, 0x80, 0x80, 0xF0,
+			0xE0, 0x90, 0x90, 0x90, 0xE0,
+			0xF0, 0x80, 0xF0, 0x80, 0xF0,
 			0xF0, 0x80, 0xF0, 0x80, 0x80
 		].map(function (b, i) {
 
@@ -104,14 +104,14 @@ window.VM = {
 			this.step();
 		}.bind(this), 1000 / this.cpuSpeed);
 
-		this.dtTimer();
+		this.sixtyHz();
 
 	},
 
 	stop: function () {
 
 		clearInterval(this.timer);
-		clearInterval(this.timer_dt);
+		//clearInterval(this.timer_dt);
 
 	},
 
@@ -186,7 +186,7 @@ window.VM = {
 				break;
 
 			default:
-				console.log("nop. 0x0nnn.");
+				console.log("NOP 0x0nnn.");
 				// Jump to nnnn? 0NNN: Calls RCA 1802 program at address NNN.
 				//this.pc = verify(nnn);
 				break;
@@ -292,7 +292,7 @@ window.VM = {
 				break;
 
 			default:
-				console.log("Unknown 0x8000", di);
+				console.log("NOP 0x8000", di);
 			}
 
 			break;
@@ -326,10 +326,8 @@ window.VM = {
 			// is XOR drawing (i.e. it toggles the screen pixels)
 
 			var collision = this.drawSprite(this.V[x], this.V[y], this.I, n);
-
-			//console.log(collision);
-
 			this.V[0xF] = collision ? 0x1 : 0;
+
 			break;
 
 		case 0xE000:
@@ -382,7 +380,6 @@ window.VM = {
 
 			case 0x18:
 				// FX18: Sets the sound timer to VX.
-				console.log(this.V[x]);
 				this.ST = this.V[x];
 				if (this.ST > 0) {
 
@@ -452,33 +449,29 @@ window.VM = {
 
 	},
 
-	dtTimer: function () {
+	sixtyHz: function () {
 
-		this.timer_dt = setTimeout(function () {
+		if (this.timer) {
 
-			if (this.timer) {
+			if (this.DT > 0) {
 
-				if (this.DT > 0) {
+				this.DT -= 1;
 
-					this.DT -= 1;
-
-				}
-
-				if (this.ST > 0) {
-
-					this.ST -= 1;
-					if (this.ST <= 0) {
-
-						this.soundOff();
-
-					}
-
-				}
 			}
 
-			this.dtTimer();
+			if (this.ST > 0) {
 
-		}.bind(this), 1000 / 60);
+				this.ST -= 1;
+				if (this.ST <= 0) {
+
+					this.soundOff();
+
+				}
+
+			}
+		}
+
+		requestAnimationFrame(this.sixtyHz.bind(this))
 
 	},
 
@@ -522,7 +515,7 @@ window.VM = {
 	soundOff: function () {
 
 		this.sound.off();
-		
+
 	}
 
 };
