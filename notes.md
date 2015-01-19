@@ -69,6 +69,15 @@ following symbols:
     X and Y: 4-bit register identifier
 
 
+
+## Keypad
+
+1	2	3	C
+4	5	6	D
+7	8	9	E
+A	0	B	F
+
+
 ## EMULATOR DIFFERENCES
 There are a number of differences between the various emulators. No doubt this could all be resolved if anyone had the sources to the original (circa 1977) interpreter.
 Add Aligned Opcodes

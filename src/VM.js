@@ -23,27 +23,50 @@ window.VM = {
 		this.display = Object.create(window.Display).init("#screen");
 		this.sound = Object.create(window.Sound).init();
 
-		this.keys = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+		var keys = this.keys = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
 		this.RAM = new Uint8Array(new ArrayBuffer(0x1000));
 		this.V = new Uint8Array(new ArrayBuffer(16));
 		this.stack = [];
 
+		var keyed = function (code, isDown) {
+
+			var k = -1;
+
+			switch (code) {
+				case 49: k = 0x1; break;
+				case 50: k = 0x2; break;
+				case 51: k = 0x3; break;
+				case 52: k = 0xC; break;
+				case 81: k = 0x4; break;
+				case 87: k = 0x5; break;
+				case 69: k = 0x6; break;
+				case 82: k = 0xD; break;
+				case 65: k = 0x7; break;
+				case 83: k = 0x8; break;
+				case 68: k = 0x9; break;
+				case 70: k = 0xE; break;
+				case 90: k = 0xA; break;
+				case 88: k = 0x0; break;
+				case 67: k = 0xB; break;
+				case 86: k = 0xF; break;
+			}
+
+			if (k < 0) return;
+
+			this.keys[k] = isDown ? 0x1 : 0x0;
+
+		}.bind(this);
+
 		document.addEventListener("keydown", function (e) {
 			if (e.repeat) {
 				return;
 			}
-			var key = e.keyCode - 65;
-			if (key >= 0 && key <= 0xF) {
-				this.keys[key] = 0x1;
-			}
+			keyed(e.keyCode, true);
 		}.bind(this), false);
 
 		document.addEventListener("keyup", function (e) {
-			var key = e.keyCode - 65;
-			if (key >= 0 && key <= 0xF) {
-				this.keys[key] = 0x0;
-			}
+			keyed(e.keyCode, false);
 		}.bind(this), false);
 
 		this.storeFont();
