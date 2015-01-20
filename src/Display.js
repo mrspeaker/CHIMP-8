@@ -2,7 +2,7 @@ var Display = {
 
 	w: 64,
 	h: 32,
-	zoom: 4,
+	zoom: 7,
 
 	col1: "#5d0",
 	col2: "#0a0",

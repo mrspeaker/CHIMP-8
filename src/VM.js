@@ -2,7 +2,7 @@
 
 window.VM = {
 
-	cpuSpeed: 500 / 4,
+	//cpuSpeed: 500,
 
 	RAM: null,
 	display: null,
@@ -44,22 +44,22 @@ window.VM = {
 			var k = -1;
 
 			switch (code) {
-				case 49: k = 0x1; break;
-				case 50: k = 0x2; break;
-				case 51: k = 0x3; break;
-				case 52: k = 0xC; break;
-				case 81: k = 0x4; break;
-				case 87: k = 0x5; break;
-				case 69: k = 0x6; break;
-				case 82: k = 0xD; break;
-				case 65: k = 0x7; break;
-				case 83: k = 0x8; break;
-				case 68: k = 0x9; break;
-				case 70: k = 0xE; break;
-				case 90: k = 0xA; break;
-				case 88: k = 0x0; break;
-				case 67: k = 0xB; break;
-				case 86: k = 0xF; break;
+			case 49: k = 0x1; break;
+			case 50: k = 0x2; break;
+			case 51: k = 0x3; break;
+			case 52: k = 0xC; break;
+			case 81: k = 0x4; break;
+			case 87: k = 0x5; break;
+			case 69: k = 0x6; break;
+			case 82: k = 0xD; break;
+			case 65: k = 0x7; break;
+			case 83: k = 0x8; break;
+			case 68: k = 0x9; break;
+			case 70: k = 0xE; break;
+			case 90: k = 0xA; break;
+			case 88: k = 0x0; break;
+			case 67: k = 0xB; break;
+			case 86: k = 0xF; break;
 			}
 
 			if (k < 0) return;
@@ -133,23 +133,20 @@ window.VM = {
 
 	run: function () {
 
-		this.stop();
+		if (!this.running) {
 
-		this.timer = setInterval(function () {
-			//this.step();
-			//this.step();
-			//this.step();
-			//this.step();
-		}.bind(this), 1000);//1000 / this.cpuSpeed);
+			this.running = setInterval(function () {}.bind(this), 1000); //1000 / this.cpuSpeed;
 
-		this.sixtyHz();
+			this.sixtyHz();
+
+		}
 
 	},
 
 	stop: function () {
 
-		clearInterval(this.timer);
-		//clearInterval(this.timer_dt);
+		clearInterval(this.running);
+		this.running = null;
 
 	},
 
@@ -372,7 +369,7 @@ window.VM = {
 			switch (nn) {
 			case 0x9E:
 				// EX9E: Skips the next instruction if the key stored in VX is pressed.
-				// TODO: is this gaurd needed? Or should it be a mask (VX & 0xF)?
+				// TODO: is this guard needed? Or should it be a mask (VX & 0xF)?
 				if (this.V[x] <= 0xF) {
 					if (this.keys[this.V[x]]) {
 						this.pc += 2;
@@ -489,7 +486,7 @@ window.VM = {
 
 	sixtyHz: function () {
 
-		if (this.timer) {
+		if (this.running) {
 
 			this.step();
 			this.step();

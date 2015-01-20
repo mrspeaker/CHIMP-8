@@ -2,11 +2,15 @@ var Sound = {
 
 	init: function () {
 
-		var ctx;
+		var ctx,
+			vco,
+			vca;
+
 		try {
 
 			window.AudioContext = window.AudioContext || window.webkitAudioContext;
 			ctx = new AudioContext();
+
 		}
 		catch (e) {
 
@@ -16,11 +20,11 @@ var Sound = {
 
 		if (!ctx) { return; }
 
-		var vco = ctx.createOscillator();
+		vco = ctx.createOscillator();
 		vco.type = "sin";
 		vco.frequency.value = 261.63;
 
-		var vca = ctx.createGain();
+		vca = ctx.createGain();
 		vca.gain.value = 0;
 
 		vco.connect(vca);

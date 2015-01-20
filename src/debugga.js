@@ -43,8 +43,10 @@ function debugga (VM) {
 			case 0x1000: out.push("jump " + h(nnn)); break;
 			case 0x2000: out.push("call " + h(nnn)); break;
 			case 0x3000: out.push("skip.eq v" + h(x) + ", " + h(nn)); break;
+			case 0x4000: out.push("skip.ne v" + h(x) + ", " + h(nn)); break;
+			case 0x5000: out.push("skip.eq v" + h(x) + ", v" + h(y)); break;
 			case 0x6000: out.push("load v"+ h(x) + ", " + h(nn)); break;
-			case 0x7000: out.push("add v" + x + ", " + h(nn)); break;
+			case 0x7000: out.push("add v" + h(x) + ", " + h(nn)); break;
 			case 0x8000:
 				switch (n) {
 				case 0x1: out.push("or v" + x +", v" + y); break;
@@ -53,14 +55,27 @@ function debugga (VM) {
 				case 0x4: out.push("add v" + x +", v" + y); break;
 				case 0x5: out.push("sub v" + x +", v" + y); break;
 				case 0x6: out.push("shr v" + x); break;
-				default: out.push("reg."); break;
+				default: out.push("reg???."); break;
 				}
 				break;
+			case 0x9000: out.push("skip.ne v" + h(x) + ", v" + h(y)); break;
 			case 0xA000: out.push("load I, ", h(nnn)); break;
-			case 0xB000: out.push("jump " + h(nnn) + ", v" + x + "."); break;
+			case 0xB000: out.push("jump " + h(nnn) + ", v" + h(x) + "."); break;
 			case 0xC000: out.push("rnd v" + h(x) + ", " + h(nn)); break;
-			case 0xD000: out.push("draw " + h(n) + " bytes at I from V" + x + ", V" + y); break;
-
+			case 0xD000: out.push("draw " + h(n) + " bytes at I from V" + h(x) + ", V" + h(y)); break;
+			case 0xE000:
+				switch (nn) {
+				case 0x9E: out.push("jump.key.eq v" + h(x)); break;
+				case 0xA1: out.push("jump.key.neq v" + h(x)); break;
+				}
+				break;
+			case 0xF000:
+				switch (nn) {
+				case 0x07: out.push("move.dt v" + h(x)); break;
+				case 0x0A: out.push("block.key v" + h(x)); break;
+				case 0x15: out.push("load.key v" + h(x)); break;
+				default: out.push("???"); break;
+				}
 			default:
 				out.push(".");
 			}

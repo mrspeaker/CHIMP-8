@@ -8,6 +8,7 @@
 		body {
 			font-family: monospace;
 			font-size: 8pt;
+			background-color: #021;
 		}
 
 		canvas {
@@ -31,42 +32,71 @@
 			width: 400px;
 		}
 
+		#container {
+			padding: 10px;
+			border: 1px solid;
+			width: 470px;
+			text-align: center;
+			margin: auto;
+			border-radius: 5px;
+			background-color: #eee;
+			margin-top: 20px;
+		}
+
+		#controls {
+			text-align: left;
+			padding: 10px;
+		}
+
 	</style>
 </head>
 <body>
-	<div id="screen"></div>
+	<div id="container">
 
-	<div>
-		<button id="step">Step</button>
-		<button id="run">Run</button>
-		<button id="stop">Stop</button>
-		<button id="reset">Reset</button>
-	</div>
+		<div id="screen"></div>
 
-	<div id="dbg">
-		<div id="reg"></div>
-		<div id="pc"></div>
-	</div>
+		<div id="controls">
+			<div>
+				<button id="step">Step</button>
+				<button id="run">Run</button>
+				<button id="stop">Stop</button>
+				<button id="reset">Reset</button>
+			</div>
 
-	<input type="checkbox" id="dbgStep" checked="true">Dbg
+			<div id="dbg">
+				<div id="reg"></div>
+				<div id="pc"></div>
+				<div>
+					<input type="checkbox" id="dbgStep" style="margin-top:10px" checked="true">Debug on
+				</div>
+			</div>
 
-	<div style="clear:both;padding-top:10px">
-		<span>CHIMP-8</span>
-		<select id="loady">
-			<option value="">-- ROMS --</option>
-			<option value="Logo.ch8">Logo</option>
-			<option value="Maze2.ch8">Maze</option>
-			<option value="Breakout1979.ch8">Breakout</option>
-			<option value="Space Invaders.ch8">Space Invaders</option>
-			<option value="Particle.ch8">Particles</option>
-			<option value="Worm V4.ch8">Worm V4</option>
-			<option value="Life.ch8">Life</option>
-			<option value="Tetris.ch8">Tetris</option>
-			<option value="Trip8.ch8">Trip8 demo</option>
-			<option value="Jumping X and O.ch8">Jumping X and O</option>
-			<option value="15.ch8">15</option>
-			<option value="Sirpinski.ch8">Sirpinski</option>
-		</select>
+			<div style="clear:both;padding-top:10px">
+				<span>CHIMP-8</span>
+				<select id="loady">
+					<option value="">-- ROMS --</option>
+					<option value="Logo.ch8">Logo</option>
+					<option value="Maze2.ch8">Maze</option>
+					<option value="Breakout1979.ch8">Breakout</option>
+					<option value="Space Invaders.ch8">Space Invaders</option>
+					<option value="Particle.ch8">Particles</option>
+					<option value="Worm V4.ch8">Worm V4</option>
+					<option value="Life.ch8">Life</option>
+					<option value="Tetris.ch8">Tetris</option>
+					<option value="Trip8.ch8">Trip8 demo</option>
+					<option value="Jumping X and O.ch8">Jumping X and O</option>
+					<option value="15.ch8">15</option>
+					<option value="Sirpinski.ch8">Sirpinski</option>
+				</select>
+				<br/>
+				<pre>
+<strong>Keys:</strong>
+1|2|3|4
+Q|W|E|R
+A|S|D|F
+				</pre>
+			</div>
+		</div>
 	</div>
 
 	<script src="src/debugga.js"></script>
