@@ -37,15 +37,18 @@ var Display = {
 
 	render: function () {
 
-		var zoom = this.zoom,
-			data = this.data.data;
+		var c = this.c,
+			zoom = this.zoom,
+			data = this.data.data,
+			w = this.w * this.zoom,
+			h = this.h * this.zoom;
 
-		this.c.globalAlpha = 0.15;
-		this.c.fillStyle = "#000";
-		this.c.fillRect(0, 0, this.w * this.zoom, this.h * this.zoom);
-		this.c.globalAlpha = 1;
+		c.globalAlpha = 0.15;
+		c.fillStyle = "#111";
+		c.fillRect(0, 0, w, h);
+		c.globalAlpha = 1;
 
-		this.c.fillStyle = this.col;
+		c.fillStyle = this.col;
 
 		var x, y, i, r, g, b;
 
@@ -58,17 +61,18 @@ var Display = {
 				a = data[i + 3];
 
 			    if (r !== 0 || g !== 0 || b !== 0) {
-			    	this.c.fillStyle = this.col1;
-			    	this.c.fillRect(x * zoom, y * zoom, zoom, 1);
-			    	this.c.fillRect(x * zoom, y * zoom, 1, zoom);
+			    	c.fillStyle = this.col1;
+			    	c.fillRect(x * zoom, y * zoom, zoom, 1);
+			    	c.fillRect(x * zoom, y * zoom, 1, zoom);
 
-			    	this.c.fillStyle = this.col3;
-			    	this.c.fillRect(x * zoom + 1, y * zoom + (zoom - 1), zoom - 1, 1);
-			    	this.c.fillRect(x * zoom + (zoom - 1), y * zoom, 1, zoom );
+			    	c.fillStyle = this.col3;
+			    	c.fillRect(x * zoom + 1, y * zoom + (zoom - 1), zoom - 1, 1);
+			    	c.fillRect(x * zoom + (zoom - 1), y * zoom, 1, zoom );
 
-			    	this.c.fillStyle = this.col2;
-			    	this.c.fillRect(x * zoom + 1, y * zoom + 1, zoom - 2, zoom - 2)
+			    	c.fillStyle = this.col2;
+			    	c.fillRect(x * zoom + 1, y * zoom + 1, zoom - 2, zoom - 2);
 			    }
+
 			}
 		}
 

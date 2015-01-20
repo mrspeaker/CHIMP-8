@@ -432,6 +432,7 @@ window.VM = {
 			case 0x29:
 				// FX29: Sets I to the location of the sprite for the character in VX. Characters 0-F (in hexadecimal) are represented by a 4x5 font.
 				this.I = 0x00 + (this.V[x] * 5);
+				if (this.I > 0xFFF) this.I -= 0xFFF;
 				break;
 
 			case 0x33:
