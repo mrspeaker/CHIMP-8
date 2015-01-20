@@ -3,7 +3,10 @@ var Display = {
 	w: 64,
 	h: 32,
 	zoom: 4,
-	col: "#0d0",
+
+	col1: "#5d0",
+	col2: "#0a0",
+	col3: "#088",
 
 	init: function (container) {
 
@@ -37,7 +40,7 @@ var Display = {
 		var zoom = this.zoom,
 			data = this.data.data;
 
-		this.c.globalAlpha = 0.1;
+		this.c.globalAlpha = 0.15;
 		this.c.fillStyle = "#000";
 		this.c.fillRect(0, 0, this.w * this.zoom, this.h * this.zoom);
 		this.c.globalAlpha = 1;
@@ -55,7 +58,16 @@ var Display = {
 				a = data[i + 3];
 
 			    if (r !== 0 || g !== 0 || b !== 0) {
-			    	this.c.fillRect(x * zoom,y * zoom, zoom - 1, zoom - 1);
+			    	this.c.fillStyle = this.col1;
+			    	this.c.fillRect(x * zoom, y * zoom, zoom, 1);
+			    	this.c.fillRect(x * zoom, y * zoom, 1, zoom);
+
+			    	this.c.fillStyle = this.col3;
+			    	this.c.fillRect(x * zoom + 1, y * zoom + (zoom - 1), zoom - 1, 1);
+			    	this.c.fillRect(x * zoom + (zoom - 1), y * zoom, 1, zoom );
+
+			    	this.c.fillStyle = this.col2;
+			    	this.c.fillRect(x * zoom + 1, y * zoom + 1, zoom - 2, zoom - 2)
 			    }
 			}
 		}

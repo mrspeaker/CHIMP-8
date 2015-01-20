@@ -136,11 +136,11 @@ window.VM = {
 		this.stop();
 
 		this.timer = setInterval(function () {
-			this.step();
-			this.step();
-			this.step();
-			this.step();
-		}.bind(this), 1000 / this.cpuSpeed);
+			//this.step();
+			//this.step();
+			//this.step();
+			//this.step();
+		}.bind(this), 1000);//1000 / this.cpuSpeed);
 
 		this.sixtyHz();
 
@@ -490,6 +490,13 @@ window.VM = {
 	sixtyHz: function () {
 
 		if (this.timer) {
+
+			this.step();
+			this.step();
+			this.step();
+			this.step();
+			this.step();
+			this.step();
 
 			if (this.DT > 0) {
 
