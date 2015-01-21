@@ -35,8 +35,8 @@ function debugga (VM) {
 			switch (instruction & 0xF000) {
 			case 0x0000:
 				switch (nnn) {
-				case 0x0E0: out.push("clear. Clear screen."); break;
-				case 0x0EE: out.push("ret. Return from subroutine."); break;
+				case 0x0E0: out.push("clear (Clear screen)"); break;
+				case 0x0EE: out.push("return (Return from subroutine)"); break;
 				default: out.push("jump " + h(nnn) + "."); break;
 				}
 				break;
@@ -74,7 +74,10 @@ function debugga (VM) {
 				case 0x07: out.push("move.dt v" + h(x)); break;
 				case 0x0A: out.push("block.key v" + h(x)); break;
 				case 0x15: out.push("load.key v" + h(x)); break;
+				case 0x18: out.push("move.snd v" + h(x)); break;
 				case 0x1e: out.push("add I, v" + h(x)); break;
+				case 0x29: out.push("load I, font v" + h(x)); break;
+				case 0x33: out.push("bcd" + h(x)); break;
 				default: out.push("???"); break;
 				}
 				break;
