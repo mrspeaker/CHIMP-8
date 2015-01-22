@@ -1,11 +1,10 @@
 # CHIMP-8
 
-a CHIP-8 VM
-by Mr Speaker
+a CHIP-8 VM by Mr Speaker
 
 Go play with the [CHIMP-8 demo](http://mrspeaker.github.io/CHIMP-8/)
 
-![chimp-8b](https://cloud.githubusercontent.com/assets/129330/5837153/a4920f60-a14a-11e4-81e3-d58ed22358e0.png)
+[![chimp-8b](https://cloud.githubusercontent.com/assets/129330/5837153/a4920f60-a14a-11e4-81e3-d58ed22358e0.png)](http://mrspeaker.github.io/CHIMP-8/)
 
 
 # Keys
@@ -20,3 +19,4 @@ Mapped to:
 
 - Main timer is setInterval... use rAF and do X iterations per loop instead.
 - Need key remapping screen
+	- or at least map cursor keys
