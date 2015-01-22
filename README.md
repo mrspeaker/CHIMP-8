@@ -5,7 +5,7 @@ by Mr Speaker
 
 Go play with the [CHIMP-8 demo](http://mrspeaker.github.io/CHIMP-8/)
 
-![chimp-8](https://cloud.githubusercontent.com/assets/129330/5790858/db0c54c8-9e7b-11e4-84a0-b0c0e362519f.png)
+![chimp-8b](https://cloud.githubusercontent.com/assets/129330/5837153/a4920f60-a14a-11e4-81e3-d58ed22358e0.png)
 
 
 # Keys
